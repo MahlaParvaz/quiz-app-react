@@ -19,7 +19,7 @@ function QuizCard() {
       }
     };
     fetchDataQuestions();
-  });
+  }, []);
   useEffect(() => {
     setAnswer([]);
   }, [activeQuestion]);
