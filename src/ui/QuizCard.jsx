@@ -6,6 +6,9 @@ function QuizCard() {
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [answer, setAnswer] = useState([]);
   const [error, setError] = useState('');
+  const [submit, setSubmit] = useState(false);
+  const [selected, setSelected] = useState(Array.from({ length: 10 }, () => [])); // Initialize selected as an array of arrays
+
   useEffect(() => {
     const fetchDataQuestions = async () => {
       try {
@@ -13,13 +16,13 @@ function QuizCard() {
           'https://opentdb.com/api.php?amount=10&category=18&difficulty=easy&type=multiple'
         );
         setQuestions(data.results);
-        console.log(data.results);
       } catch (error) {
         setError(error.message);
       }
     };
     fetchDataQuestions();
   }, []);
+
   useEffect(() => {
     setAnswer([]);
   }, [activeQuestion]);
@@ -28,14 +31,38 @@ function QuizCard() {
   const options = data ? [data.correct_answer, ...data.incorrect_answers] : [];
 
   const handleNextBtn = () => {
+    if (selected[activeQuestion].length === 0) {
+      setError('Please select one option!');
+      return;
+    }
+
     setActiveQuestion((prevActionQuestion) => prevActionQuestion + 1);
   };
+
   const handlePrevBtn = () => {
     setActiveQuestion((prevActionQuestion) => prevActionQuestion - 1);
   };
-  const handleAnswerSelect = (selectedOptions) => {
-    setAnswer((prevSelectedAnswer) => [...prevSelectedAnswer, selectedOptions]);
-    console.log(selectedOptions);
+
+  const handleAnswerSelect = (selectedOption) => {
+    setSelected((prevSelected) => {
+      const updatedSelected = [...prevSelected];
+      updatedSelected[activeQuestion] = selectedOption; 
+      return updatedSelected;
+    });
+  };
+
+  const handleSubmit = () => {
+    if (selected[activeQuestion].length === 0) {
+      setError('Please select one option!');
+      return;
+    }
+    setSubmit(true);
+    console.log('click');
+  };
+
+  const isCorrectAnswer = (questionIndex) => {
+    const correctAnswer = questions[questionIndex].correct_answer;
+    return selected[questionIndex] === correctAnswer;
   };
 
   return (
@@ -51,17 +78,17 @@ function QuizCard() {
 
           <div className="question-card__content">
             <p className="content__text">{data?.question}</p>
-            {options.map((option) => {
-              return (
-                <div
-                  key={option.id}
-                  className="content__item"
-                  onClick={() => handleAnswerSelect(option)}
-                >
-                  {option}
-                </div>
-              );
-            })}
+            {options.map((option, index) => (
+              <div
+                key={index}
+                className={`content__item ${
+                  selected[activeQuestion] === option ? 'selected' : ''
+                }`}
+                onClick={() => handleAnswerSelect(option)}
+              >
+                {option}
+              </div>
+            ))}
           </div>
           <div className="question-card__btn">
             <button
@@ -71,14 +98,38 @@ function QuizCard() {
             >
               Previous
             </button>
-            <button
-              className="btn btn--next"
-              onClick={handleNextBtn}
-              disabled={activeQuestion === questions.length - 1}
-            >
-              Next
-            </button>
+            {submit ? (
+              <button className="btn btn--reset">Reset</button>
+            ) : (
+              <button
+                className="btn btn--next"
+                onClick={
+                  activeQuestion === questions.length - 1
+                    ? handleSubmit
+                    : handleNextBtn
+                }
+              >
+                {activeQuestion === questions.length - 1 ? 'Submit' : 'Next'}
+              </button>
+            )}
           </div>
+          {submit && (
+            <div>
+              <h2>Answers</h2>
+              <ul>
+                {questions.map((question, index) => (
+                  <li key={index}>
+                    <span>
+                      Question {index + 1}: {question?.question}
+                    </span>
+                    <span>Correct Answer: {question.correct_answer}</span>
+                    <span> | Your Answer: {selected[index]}</span>
+                    <p>{isCorrectAnswer(index) ? 'Correct!' : 'Incorrect!'}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>
