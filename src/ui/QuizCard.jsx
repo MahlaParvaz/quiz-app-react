@@ -1,13 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+import ShowResult from './ShowResult';
+import toast from 'react-hot-toast';
+
 function QuizCard() {
   const [questions, setQuestions] = useState([]);
   const [activeQuestion, setActiveQuestion] = useState(0);
   const [answer, setAnswer] = useState([]);
-  const [error, setError] = useState('');
   const [submit, setSubmit] = useState(false);
-  const [selected, setSelected] = useState(Array.from({ length: 10 }, () => [])); // Initialize selected as an array of arrays
+  const [selected, setSelected] = useState(
+    Array.from({ length: 10 }, () => [])
+  );
 
   useEffect(() => {
     const fetchDataQuestions = async () => {
@@ -17,7 +21,7 @@ function QuizCard() {
         );
         setQuestions(data.results);
       } catch (error) {
-        setError(error.message);
+        toast.error(error.message);
       }
     };
     fetchDataQuestions();
@@ -32,7 +36,7 @@ function QuizCard() {
 
   const handleNextBtn = () => {
     if (selected[activeQuestion].length === 0) {
-      setError('Please select one option!');
+      toast.error('Please select one option!');
       return;
     }
 
@@ -46,20 +50,22 @@ function QuizCard() {
   const handleAnswerSelect = (selectedOption) => {
     setSelected((prevSelected) => {
       const updatedSelected = [...prevSelected];
-      updatedSelected[activeQuestion] = selectedOption; 
+      updatedSelected[activeQuestion] = selectedOption;
       return updatedSelected;
     });
   };
 
   const handleSubmit = () => {
     if (selected[activeQuestion].length === 0) {
-      setError('Please select one option!');
+      toast.error('Please select one option!');
       return;
     }
     setSubmit(true);
-    console.log('click');
   };
-
+  const handleReset = () => {
+    setSubmit(false);
+    setSelected(Array.from({ length: 10 }, () => []));
+  };
   const isCorrectAnswer = (questionIndex) => {
     const correctAnswer = questions[questionIndex].correct_answer;
     return selected[questionIndex] === correctAnswer;
@@ -99,7 +105,9 @@ function QuizCard() {
               Previous
             </button>
             {submit ? (
-              <button className="btn btn--reset">Reset</button>
+              <button className="btn btn--reset" onClick={handleReset}>
+                Reset
+              </button>
             ) : (
               <button
                 className="btn btn--next"
@@ -112,24 +120,14 @@ function QuizCard() {
                 {activeQuestion === questions.length - 1 ? 'Submit' : 'Next'}
               </button>
             )}
+            <ShowResult
+              isCorrectAnswer={isCorrectAnswer}
+              submit={submit}
+              selected={selected}
+              setSubmit={setSubmit}
+              questions={questions}
+            />
           </div>
-          {submit && (
-            <div>
-              <h2>Answers</h2>
-              <ul>
-                {questions.map((question, index) => (
-                  <li key={index}>
-                    <span>
-                      Question {index + 1}: {question?.question}
-                    </span>
-                    <span>Correct Answer: {question.correct_answer}</span>
-                    <span> | Your Answer: {selected[index]}</span>
-                    <p>{isCorrectAnswer(index) ? 'Correct!' : 'Incorrect!'}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       )}
     </div>
