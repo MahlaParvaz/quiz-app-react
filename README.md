@@ -3,7 +3,7 @@
 https://github.com/MahlaParvaz/quiz-app-react/assets/107788139/88c8d947-3c27-445f-a15c-207a7a251c01
 
 
-![Screenshot 2024-05-06 234448](https://github.com/MahlaParvaz/quiz-app-react/assets/107788139/f3f8b845-ca42-4e37-8463-11b39abdbe4a)
+![Screenshot 2024-05-06 234448](https://github.com/MahlaParvaz/quiz-app-react/assets/107788139/56163e17-d479-4d27-ba41-e9a5774516bc)
 ![Screenshot 2024-05-06 234205](https://github.com/MahlaParvaz/quiz-app-react/assets/107788139/a082aed6-c086-4bf4-be1b-dae1b908877c)
 ![Screenshot 2024-05-06 234243](https://github.com/MahlaParvaz/quiz-app-react/assets/107788139/48d8019d-7c6b-4ce2-9905-837cba4096a9)
 
