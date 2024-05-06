@@ -64,6 +64,7 @@ export function QuizAppProvider({ children }) {
 
   const handlePrevBtn = () => {
     setActiveQuestion((prevActionQuestion) => prevActionQuestion - 1);
+    setTimer(10);
   };
 
   const handleAnswerSelect = (selectedOption) => {
@@ -84,8 +85,8 @@ export function QuizAppProvider({ children }) {
   const handleReset = () => {
     setSubmit(false);
     setSelected(Array.from({ length: 10 }, () => []));
-    setActiveQuestion(0); 
-    setQuizStarted(false); 
+    setActiveQuestion(0);
+    setQuizStarted(false);
     navigate('/');
   };
   const isCorrectAnswer = (questionIndex) => {

@@ -72,7 +72,7 @@ function QuizCard() {
                   Previous
                 </button>
                 {submit ? (
-                  <Link to="/result" className="btn btn--reset">
+                  <Link to="/result" className="btn btn--result">
                     Go to Result
                   </Link>
                 ) : (
